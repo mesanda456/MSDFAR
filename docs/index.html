@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DFAR Management System - Technical Documentation Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark-dimmed.min.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+
+  <style>
+    :root {
+      --bg-base: #0b1120;
+      --bg-surface: #0f172a;
+      --bg-surface-elevated: #1e293b;
+      --bg-card: rgba(30, 41, 59, 0.7);
+      --border-subtle: #334155;
+      --border-bright: #475569;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --primary: #0ea5e9;
+      --primary-hover: #38bdf8;
+      --primary-glow: rgba(14, 165, 233, 0.25);
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.2);
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --sidebar-width: 320px;
+      --toc-width: 250px;
+      --header-height: 64px;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="light"] {
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --border-subtle: #e2e8f0;
+      --border-bright: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-glow: rgba(2, 132, 199, 0.15);
+      --accent: #059669;
+      --accent-glow: rgba(5, 150, 105, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Progress Bar */
+    #reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      width: 0%;
+      z-index: 100;
+      transition: width 0.1s;
+    }
+
+    /* Header */
+    header {
+      height: var(--header-height);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 50;
+      flex-shrink: 0;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #0284c7, #10b981);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+
+    .brand-titles h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: var(--primary-glow);
+      color: var(--primary-hover);
+      border: 1px solid rgba(14, 165, 233, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      background: var(--border-subtle);
+      border-color: var(--border-bright);
+      color: var(--text-main);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 2px 8px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0369a1, #0284c7);
+      border-color: #7dd3fc;
+    }
+
+    .btn-icon {
+      padding: 8px 10px;
+    }
+
+    /* Layout Container */
+    .app-container {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - var(--header-height));
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    aside.sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .sidebar-search {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .search-input-wrapper {
+      position: relative;
+    }
+
+    .search-input-wrapper input {
+      width: 100%;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 9px 12px 9px 36px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input-wrapper input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 12px;
+    }
+
+    .nav-category {
+      margin-bottom: 20px;
+    }
+
+    .nav-category-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 12px 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: none;
+      margin-bottom: 3px;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+    }
+
+    .nav-item.active {
+      background: var(--primary-glow);
+      color: var(--primary-hover);
+      border-color: rgba(14, 165, 233, 0.4);
+      font-weight: 600;
+    }
+
+    .nav-item-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .nav-number {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      background: var(--bg-base);
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .nav-item.active .nav-number {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .nav-pill {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: var(--bg-surface-elevated);
+      color: var(--text-dim);
+    }
+
+    .nav-pill.highlight {
+      background: var(--accent-glow);
+      color: var(--accent);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* Main Content Area */
+    main.content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 40px 48px;
+      background: var(--bg-base);
+      scroll-behavior: smooth;
+    }
+
+    .doc-wrapper {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+      font-family: var(--font-mono);
+    }
+
+    .breadcrumb span.current {
+      color: var(--primary-hover);
+      font-weight: 500;
+    }
+
+    /* Markdown Content Styling */
+    .markdown-body {
+      color: var(--text-main);
+      font-size: 15px;
+      line-height: 1.75;
+    }
+
+    .markdown-body h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+    }
+
+    .markdown-body h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-top: 36px;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .markdown-body h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-top: 24px;
+      margin-bottom: 10px;
+      color: var(--primary-hover);
+    }
+
+    .markdown-body p {
+      margin-bottom: 16px;
+      color: var(--text-muted);
+    }
+
+    .markdown-body ul, .markdown-body ol {
+      margin-bottom: 18px;
+      padding-left: 24px;
+      color: var(--text-muted);
+    }
+
+    .markdown-body li {
+      margin-bottom: 6px;
+    }
+
+    .markdown-body a {
+      color: var(--primary-hover);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(14, 165, 233, 0.5);
+      transition: border 0.15s;
+    }
+
+    .markdown-body a:hover {
+      border-bottom-style: solid;
+      color: var(--primary);
+    }
+
+    .markdown-body blockquote {
+      border-left: 4px solid var(--primary);
+      padding: 12px 18px;
+      margin: 20px 0;
+      background: var(--bg-card);
+      border-radius: 0 8px 8px 0;
+      color: var(--text-muted);
+    }
+
+    /* GitHub Alert Styles */
+    .alert-box {
+      border-left: 4px solid var(--primary);
+      padding: 14px 18px;
+      margin: 20px 0;
+      background: var(--bg-card);
+      border-radius: 0 10px 10px 0;
+      font-size: 14px;
+    }
+
+    .alert-box.note { border-left-color: #0284c7; background: rgba(2, 132, 199, 0.08); }
+    .alert-box.tip { border-left-color: #10b981; background: rgba(16, 185, 129, 0.08); }
+    .alert-box.important { border-left-color: #8b5cf6; background: rgba(139, 92, 246, 0.08); }
+    .alert-box.warning { border-left-color: #f59e0b; background: rgba(245, 158, 11, 0.08); }
+
+    /* Tables */
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 13.5px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    .markdown-body th {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      font-weight: 600;
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .markdown-body td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+
+    .markdown-body tr:last-child td {
+      border-bottom: none;
+    }
+
+    .markdown-body tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-main);
+    }
+
+    /* Code & Blocks */
+    .markdown-body code {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      background: var(--bg-surface-elevated);
+      color: #38bdf8;
+      padding: 2px 6px;
+      border-radius: 5px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .markdown-body pre {
+      background: #090d16;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 16px 20px;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    .markdown-body pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: #e2e8f0;
+      font-size: 13px;
+    }
+
+    /* Mermaid Diagrams */
+    .mermaid {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 28px 0;
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Table of Contents Aside */
+    aside.toc {
+      width: var(--toc-width);
+      padding: 32px 20px;
+      overflow-y: auto;
+      flex-shrink: 0;
+      border-left: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      display: none;
+    }
+
+    @media (min-width: 1280px) {
+      aside.toc {
+        display: block;
+      }
+    }
+
+    .toc-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .toc-list {
+      list-style: none;
+    }
+
+    .toc-item {
+      margin-bottom: 6px;
+    }
+
+    .toc-link {
+      display: block;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .toc-link:hover {
+      color: var(--text-main);
+      background: var(--bg-surface-elevated);
+    }
+
+    .toc-link.active {
+      color: var(--primary-hover);
+      font-weight: 600;
+      background: var(--primary-glow);
+    }
+
+    .doc-nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Loading Spinner */
+    .spinner-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 0;
+      color: var(--text-dim);
+      gap: 16px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        overflow: visible;
+        background: #fff;
+        color: #000;
+      }
+      header, aside.sidebar, aside.toc, .doc-nav-buttons, #reading-progress {
+        display: none !important;
+      }
+      main.content-area {
+        overflow: visible;
+        padding: 0;
+      }
+      .doc-wrapper {
+        max-width: 100%;
+      }
+      .markdown-body table {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <header>
+    <div class="header-brand">
+      <div class="brand-logo">DF</div>
+      <div class="brand-titles">
+        <h1>DFAR Management System <span class="brand-badge">Technical Docs</span></h1>
+        <div class="brand-subtitle">Department of Fisheries and Aquatic Resources • Sri Lanka</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <a href="http://localhost:8080" target="_blank" class="btn" title="Open Administrative Backend">
+        <span>🚀</span> Backend (:8080)
+      </a>
+      <a href="http://localhost:8081" target="_blank" class="btn" title="Open Public Citizen Portal">
+        <span>🌐</span> Frontend (:8081)
+      </a>
+      <button class="btn btn-icon" id="theme-toggle" title="Toggle Light/Dark Mode">🌓</button>
+      <button class="btn btn-primary" onclick="window.print()" title="Print / Export Current Document to PDF">
+        <span>🖨️</span> Export PDF
+      </button>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-search">
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="doc-search" placeholder="Search documentation...">
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <!-- Rendered by JS -->
+      </nav>
+    </aside>
+
+    <!-- Main Markdown Reader -->
+    <main class="content-area" id="main-content">
+      <div class="doc-wrapper">
+        <div class="breadcrumb" id="breadcrumb">
+          <span>Docs</span> <span>/</span> <span class="current" id="current-doc-name">README.md</span>
+        </div>
+
+        <article class="markdown-body" id="doc-content">
+          <div class="spinner-wrapper">
+            <div class="spinner"></div>
+            <div>Loading technical documentation...</div>
+          </div>
+        </article>
+
+        <div class="doc-nav-buttons">
+          <button class="btn" id="prev-doc-btn" style="visibility:hidden">← Previous Document</button>
+          <button class="btn btn-primary" id="next-doc-btn">Next Document →</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- On This Page Table of Contents -->
+    <aside class="toc" id="toc-pane">
+      <div class="toc-title">On This Page</div>
+      <ul class="toc-list" id="toc-list">
+        <!-- Rendered by JS -->
+      </ul>
+    </aside>
+  </div>
+
+  <script>
+    // Document manifest
+    const DOC_MANIFEST = [
+      {
+        category: "Overview",
+        items: [
+          { id: "README.md", number: "IDX", title: "Documentation Index", pill: "Master Hub" }
+        ]
+      },
+      {
+        category: "Database & Data Architecture",
+        items: [
+          { id: "00_Comprehensive_Database_Documentation.md", number: "MASTER", title: "Comprehensive DB Master", pill: "Senior 4-Pillar", highlight: true },
+          { id: "01_Database_Architecture.md", number: "01", title: "Database Architecture", pill: "InnoDB ACID" },
+          { id: "02_Database_Schemas_and_Table_Descriptions.md", number: "02", title: "Schemas & Tables", pill: "FI & Scientific", highlight: true },
+          { id: "12_Scientific_Sampling_Specification.md", number: "12", title: "Scientific Sampling Spec", pill: "10 Core Tables", highlight: true },
+          { id: "03_Metadata_and_Data_Dictionaries.md", number: "03", title: "Metadata & Dictionaries", pill: "Taxonomies" }
+        ]
+      },
+      {
+        category: "System Architecture & Workflows",
+        items: [
+          { id: "04_System_Architecture_Diagrams.md", number: "04", title: "System Architecture", pill: "Mermaid ER", highlight: true },
+          { id: "05_Software_Application_Documentation.md", number: "05", title: "Software Application", pill: "Yii2 MVC" },
+          { id: "06_Data_Flow_Diagrams.md", number: "06", title: "Data Flow Diagrams (DFD)", pill: "Level 0-2 DFD", highlight: true }
+        ]
+      },
+      {
+        category: "Operations, Security & Infrastructure",
+        items: [
+          { id: "07_Data_Access_Procedures.md", number: "07", title: "Data-Access Procedures", pill: "ActiveRecord" },
+          { id: "08_User_Permission_and_Access_Control_Procedures.md", number: "08", title: "Permissions & RBAC", pill: "AuthSecurity" },
+          { id: "09_System_Integration_Documentation.md", number: "09", title: "System Integrations", pill: "BlueTraker VMS" },
+          { id: "10_Backup_Recovery_and_Maintenance_Procedures.md", number: "10", title: "Backup & Recovery", pill: "PITR Disaster" },
+          { id: "11_Technical_Infrastructure_Descriptions.md", number: "11", title: "Technical Infrastructure", pill: "Nginx & Ports" }
+        ]
+      }
+    ];
+
+    // Flattened list for next/prev navigation
+    const FLAT_DOCS = DOC_MANIFEST.flatMap(cat => cat.items);
+    let currentDocId = "README.md";
+
+    // Initialize Mermaid
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      securityLevel: 'loose',
+      fontFamily: 'Inter, sans-serif'
+    });
+
+    // Configure Marked
+    marked.setOptions({
+      highlight: function(code, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+          return hljs.highlight(code, { language: lang }).value;
+        }
+        return hljs.highlightAuto(code).value;
+      },
+      breaks: true,
+      gfm: true
+    });
+
+    // Render Sidebar Navigation
+    function renderSidebar() {
+      const navContainer = document.getElementById("sidebar-nav");
+      navContainer.innerHTML = "";
+
+      DOC_MANIFEST.forEach(cat => {
+        const catDiv = document.createElement("div");
+        catDiv.className = "nav-category";
+
+        const titleDiv = document.createElement("div");
+        titleDiv.className = "nav-category-title";
+        titleDiv.textContent = cat.category;
+        catDiv.appendChild(titleDiv);
+
+        cat.items.forEach(item => {
+          const a = document.createElement("a");
+          a.className = `nav-item ${item.id === currentDocId ? 'active' : ''}`;
+          a.dataset.docId = item.id;
+          a.onclick = (e) => {
+            e.preventDefault();
+            loadDocument(item.id);
+          };
+
+          a.innerHTML = `
+            <div class="nav-item-content">
+              <span class="nav-number">${item.number}</span>
+              <span class="nav-title">${item.title}</span>
+            </div>
+            ${item.pill ? `<span class="nav-pill ${item.highlight ? 'highlight' : ''}">${item.pill}</span>` : ''}
+          `;
+          catDiv.appendChild(a);
+        });
+
+        navContainer.appendChild(catDiv);
+      });
+    }
+
+    // Filter sidebar search
+    document.getElementById("doc-search").addEventListener("input", function(e) {
+      const query = e.target.value.toLowerCase().trim();
+      document.querySelectorAll(".nav-item").forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(query)) {
+          item.style.display = "flex";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    });
+
+    // Load Document Content
+    async function loadDocument(docId) {
+      currentDocId = docId;
+      renderSidebar();
+
+      const docObj = FLAT_DOCS.find(d => d.id === docId);
+      document.getElementById("current-doc-name").textContent = docObj ? docObj.title : docId;
+      document.title = `${docObj ? docObj.title : docId} - DFAR Technical Documentation`;
+
+      const contentPane = document.getElementById("doc-content");
+      contentPane.innerHTML = `
+        <div class="spinner-wrapper">
+          <div class="spinner"></div>
+          <div>Loading ${docId}...</div>
+        </div>
+      `;
+
+      try {
+        const response = await fetch(`./${docId}?v=${Date.now()}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const markdown = await response.text();
+
+        // Convert GitHub alerts [!NOTE], [!TIP], etc. into styled divs
+        let processedMarkdown = markdown.replace(
+          />\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*\n(>.*(?:\n>.*)*)/gi,
+          (match, type, text) => {
+            const cleanText = text.replace(/^>\s?/gm, '');
+            return `<div class="alert-box ${type.toLowerCase()}"><strong>${type.toUpperCase()}</strong><br/>${cleanText}</div>`;
+          }
+        );
+
+        // Render Markdown to HTML
+        const html = marked.parse(processedMarkdown);
+        contentPane.innerHTML = html;
+
+        // Process Mermaid Code Blocks
+        const mermaidPreBlocks = contentPane.querySelectorAll("pre code.language-mermaid");
+        for (let block of mermaidPreBlocks) {
+          const pre = block.parentElement;
+          const mermaidCode = block.textContent;
+          const mermaidContainer = document.createElement("div");
+          mermaidContainer.className = "mermaid";
+          mermaidContainer.textContent = mermaidCode;
+          pre.replaceWith(mermaidContainer);
+        }
+
+        // Render Mermaid Diagrams
+        await mermaid.run();
+
+        // Build Table of Contents
+        buildTOC();
+
+        // Update Prev/Next Buttons
+        updateNavButtons();
+
+        // Scroll to top
+        document.getElementById("main-content").scrollTop = 0;
+
+        // Update URL hash
+        window.location.hash = docId;
+
+      } catch (err) {
+        contentPane.innerHTML = `
+          <div class="alert-box warning">
+            <strong>Unable to load ${docId}</strong><br/>
+            ${err.message}. Please verify the file exists in the <code>docs/</code> directory.
+          </div>
+        `;
+      }
+    }
+
+    // Build Table of Contents from headings
+    function buildTOC() {
+      const tocList = document.getElementById("toc-list");
+      tocList.innerHTML = "";
+      const headings = document.getElementById("doc-content").querySelectorAll("h2, h3");
+
+      if (headings.length === 0) {
+        tocList.innerHTML = `<li class="toc-item" style="color:var(--text-dim);font-size:12px;">No sub-sections</li>`;
+        return;
+      }
+
+      headings.forEach((h, index) => {
+        const id = h.id || `heading-${index}`;
+        h.id = id;
+
+        const li = document.createElement("li");
+        li.className = "toc-item";
+        li.style.paddingLeft = h.tagName === 'H3' ? '12px' : '0';
+
+        const a = document.createElement("a");
+        a.className = "toc-link";
+        a.href = `#${id}`;
+        a.textContent = h.textContent.replace(/^[0-9.]+\s*/, '');
+        a.onclick = (e) => {
+          e.preventDefault();
+          h.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
+    }
+
+    // Update Next/Previous buttons
+    function updateNavButtons() {
+      const currentIndex = FLAT_DOCS.findIndex(d => d.id === currentDocId);
+      const prevBtn = document.getElementById("prev-doc-btn");
+      const nextBtn = document.getElementById("next-doc-btn");
+
+      if (currentIndex > 0) {
+        prevBtn.style.visibility = "visible";
+        prevBtn.textContent = `← ${FLAT_DOCS[currentIndex - 1].title}`;
+        prevBtn.onclick = () => loadDocument(FLAT_DOCS[currentIndex - 1].id);
+      } else {
+        prevBtn.style.visibility = "hidden";
+      }
+
+      if (currentIndex < FLAT_DOCS.length - 1) {
+        nextBtn.style.visibility = "visible";
+        nextBtn.textContent = `${FLAT_DOCS[currentIndex + 1].title} →`;
+        nextBtn.onclick = () => loadDocument(FLAT_DOCS[currentIndex + 1].id);
+      } else {
+        nextBtn.style.visibility = "hidden";
+      }
+    }
+
+    // Reading Progress Indicator
+    document.getElementById("main-content").addEventListener("scroll", function(e) {
+      const scrollHeight = e.target.scrollHeight - e.target.clientHeight;
+      if (scrollHeight > 0) {
+        const progress = (e.target.scrollTop / scrollHeight) * 100;
+        document.getElementById("reading-progress").style.width = `${progress}%`;
+      }
+    });
+
+    // Theme Toggle (Dark/Light)
+    const themeToggleBtn = document.getElementById("theme-toggle");
+    let currentTheme = localStorage.getItem("dfar_docs_theme") || "dark";
+    document.documentElement.setAttribute("data-theme", currentTheme);
+
+    themeToggleBtn.addEventListener("click", () => {
+      currentTheme = currentTheme === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", currentTheme);
+      localStorage.setItem("dfar_docs_theme", currentTheme);
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: currentTheme === 'light' ? 'default' : 'dark'
+      });
+      loadDocument(currentDocId);
+    });
+
+    // Initialize from URL Hash or Default
+    const initialDoc = window.location.hash ? window.location.hash.substring(1) : "README.md";
+    loadDocument(initialDoc);
+  </script>
+</body>
+</html>

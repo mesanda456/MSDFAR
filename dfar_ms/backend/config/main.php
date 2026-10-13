@@ -18,6 +18,8 @@ $params = array_merge(
     require __DIR__ . '/params-local.php'
 );
 
+$isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+
 return [
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
@@ -54,7 +56,7 @@ return [
                 'name' => '_csrf-backend',
                 'path' => '/',
                 'httpOnly' => true,
-                'secure' => true,
+                'secure' => $isSecure,
                 'sameSite' => Cookie::SAME_SITE_LAX,
             ],
         ],
@@ -120,7 +122,7 @@ return [
                 'name' => '_identity-backend',
                 'path' => '/',
                 'httpOnly' => true,
-                'secure' => true,
+                'secure' => $isSecure,
                 'sameSite' => Cookie::SAME_SITE_LAX,
             ],
         ],
@@ -133,7 +135,7 @@ return [
                 'lifetime' => 0,
                 'path' => '/',
                 'httponly' => true,
-                'secure' => true,
+                'secure' => $isSecure,
                 'sameSite' => Cookie::SAME_SITE_LAX,
             ],
         ],

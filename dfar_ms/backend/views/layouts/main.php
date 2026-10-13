@@ -43,7 +43,7 @@ if (!Yii::$app->user->isGuest && UserTypeUtil::hasType(Constant::EXPORT_COMPANY)
 
 <head>
 
-    <link rel="shortcut icon" href="ftco-32x32.png">
+    <link rel="shortcut icon" href="<?= $webURL ?>/ftco-32x32.png">
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -471,8 +471,11 @@ if (
 
                         <li class="nav-item dropdown nav-user order-lg-4 ">
                             <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false"><img src="<?= Constant::$FILE_VIEW_PATH
-                                    ?>officer/profile/<?= $profileImage ?>" alt="" class="avatar-xs
+                                aria-haspopup="true" aria-expanded="false"><?php
+                                    $avatarSrc = ($profileImage === 'avatar-1.png' || empty($profileImage))
+                                        ? $webURL . '/avatar-1.png'
+                                        : Constant::$FILE_VIEW_PATH . 'officer/profile/' . $profileImage;
+                                ?><img src="<?= $avatarSrc ?>" alt="" class="avatar-xs
                                         rounded-circle">
 
                             </a>

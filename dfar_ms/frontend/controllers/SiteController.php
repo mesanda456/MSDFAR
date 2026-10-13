@@ -15,8 +15,7 @@ use yii\base\InvalidArgumentException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
-use backend\components\Controller;
-
+use yii\web\Controller;
 
 /**
  * Site controller
